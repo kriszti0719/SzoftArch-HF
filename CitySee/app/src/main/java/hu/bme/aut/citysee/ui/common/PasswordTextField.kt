@@ -57,7 +57,11 @@ fun PasswordTextField(
         } else {
             {
                 IconButton(onClick = onVisibilityChanged) {
-                    Icon(imageVector = visibilityIcon, contentDescription = null)
+                    Icon(
+                        imageVector = visibilityIcon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary // A szemecske ikon színének beállítása
+                    )
                 }
             }
         },
@@ -75,10 +79,12 @@ fun PasswordTextField(
         ),
         visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+            focusedContainerColor = MaterialTheme.colorScheme.primary,
+            unfocusedContainerColor = MaterialTheme.colorScheme.primary,
+            focusedTextColor = MaterialTheme.colorScheme.tertiary,
+            unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+            focusedLabelColor = MaterialTheme.colorScheme.tertiary,
+            unfocusedLabelColor = MaterialTheme.colorScheme.tertiary
         ),
         shape = shape
     )

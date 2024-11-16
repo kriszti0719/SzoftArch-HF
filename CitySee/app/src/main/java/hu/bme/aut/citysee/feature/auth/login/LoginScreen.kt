@@ -3,7 +3,9 @@ package hu.bme.aut.citysee.feature.auth.login
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -64,7 +66,7 @@ fun LoginScreen(
         Column(
             modifier = Modifier
                 .padding(padding)
-                .background(MaterialTheme.colorScheme.secondaryContainer)
+                .background(MaterialTheme.colorScheme.tertiary)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -86,15 +88,24 @@ fun LoginScreen(
                 isVisible = state.passwordVisibility,
                 onVisibilityChanged = { viewModel.onEvent(LoginUserEvent.PasswordVisibilityChanged) }
             )
+            Spacer(modifier = Modifier.height(30.dp))
             Button(
                 onClick = { viewModel.onEvent(LoginUserEvent.SignIn) },
-                modifier = Modifier.padding(bottom = 10.dp)
+                modifier = Modifier.padding(bottom = 5.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary, // Gomb háttérszíne
+                    contentColor = MaterialTheme.colorScheme.tertiary // Gomb szövegének színe
+                )
             ) {
                 Text(text = stringResource(id = StringResources.button_text_sign_in))
             }
             Button(
                 onClick = onRegisterClick,
-                modifier = Modifier.padding(bottom = 10.dp)
+                modifier = Modifier.padding(bottom = 5.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary, // Gomb háttérszíne
+                    contentColor = MaterialTheme.colorScheme.tertiary // Gomb szövegének színe
+                )
             ) {
                 Text(text = stringResource(id = StringResources.button_text_no_account))
             }

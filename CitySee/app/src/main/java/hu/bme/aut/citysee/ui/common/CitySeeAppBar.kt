@@ -22,17 +22,20 @@ fun CitySeeAppBar(
         navigationIcon = {
             if (onNavigateBack != null) {
                 IconButton(onClick = onNavigateBack) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary
+                    )
                 }
             }
         },
         actions = actions,
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+            titleContentColor = MaterialTheme.colorScheme.tertiary,
+            actionIconContentColor = MaterialTheme.colorScheme.tertiary,
+            navigationIconContentColor = MaterialTheme.colorScheme.tertiary
         )
     )
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.*
@@ -60,10 +61,17 @@ fun EmailTextField(
             onDone = onDone
         ),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+            focusedContainerColor = MaterialTheme.colorScheme.primary,
+            unfocusedContainerColor = MaterialTheme.colorScheme.primary,
+            focusedTextColor = MaterialTheme.colorScheme.tertiary,
+            unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+            focusedLabelColor = MaterialTheme.colorScheme.tertiary,
+            unfocusedLabelColor = MaterialTheme.colorScheme.tertiary,
+            cursorColor = MaterialTheme.colorScheme.tertiary,
+            selectionColors = TextSelectionColors(
+                handleColor = MaterialTheme.colorScheme.tertiary,
+                backgroundColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.3f)
+            ),
         ),
         shape = shape
     )
