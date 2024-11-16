@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">CitySee</string>
+    <string name="some_error_message">Error</string>
+    <string name="textfield_label_email">Email</string>
+    <string name="textfield_label_password">Password</string>
+    <string name="button_text_sign_in">Sign In</string>
+    <string name="button_text_no_account">I don\'t have an account yet.</string>
+    <string name="app_bar_title_sign_up">Sign up</string>
+    <string name="textfield_label_confirm_password">Confirm Password</string>
+    <string name="button_text_sign_up">Sign Up</string>
 </resources>
