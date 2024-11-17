@@ -36,6 +36,11 @@
     <string name="type_title_restaurant">Restaurant</string>
     <string name="type_title_bar">Bar</string>
 
-    <!--   SightsScreen    -->
+    <!--   Sight Screens    -->
     <string name="text_empty_sight_list">There are no added sights yet.</string>
+    <string name="app_bar_title_create_sight">Add sight</string>
+    <string name="textfield_label_name">Name</string>
+    <string name="textfield_label_city">City</string>
+    <string name="textfield_label_description">Description</string>
+    <string name="textfield_label_bonusImfo">Bonus info</string>
 </resources>

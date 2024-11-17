@@ -11,6 +11,7 @@ import hu.bme.aut.citysee.feature.auth.login.LoginScreen
 import hu.bme.aut.citysee.feature.auth.register.RegisterScreen
 import hu.bme.aut.citysee.feature.home.HomeScreen
 import hu.bme.aut.citysee.feature.home_list.SightsScreen
+import hu.bme.aut.citysee.feature.sight_create.CreateSightScreen
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -62,7 +63,7 @@ fun NavGraph(
 //                    navController.navigate(Screen.SightDetails.passId(it))
                 },
                 onFabClick = {
-//                    navController.navigate(Screen.SightCreate.route)
+                    navController.navigate(Screen.CreateSight.route)
                 },
                 onSignOut = {
                     navController.popBackStack(
@@ -72,6 +73,15 @@ fun NavGraph(
                     navController.navigate(Screen.Login.route)
                 }
             )
+        }
+        composable(Screen.CreateSight.route) {
+            CreateSightScreen(onNavigateBack = {
+                navController.popBackStack(
+                    route = Screen.Sights.route,
+                    inclusive = true
+                )
+                navController.navigate(Screen.Sights.route)
+            })
         }
     }
 }
