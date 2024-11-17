@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import hu.bme.aut.citysee.feature.auth.login.LoginScreen
 import hu.bme.aut.citysee.feature.auth.register.RegisterScreen
 import hu.bme.aut.citysee.feature.home.HomeScreen
+import hu.bme.aut.citysee.feature.home_list.SightsScreen
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -23,7 +24,7 @@ fun NavGraph(
         composable(Screen.Login.route) {
             LoginScreen(
                 onSuccess = {
-                    navController.navigate(Screen.Home.route)
+                    navController.navigate(Screen.Sights.route)
                 },
                 onRegisterClick = {
                     navController.navigate(Screen.Register.route)
@@ -40,12 +41,29 @@ fun NavGraph(
                     navController.navigate(Screen.Login.route)
                 },
                 onSuccess = {
-                    navController.navigate(Screen.Home.route)
+                    navController.navigate(Screen.Sights.route)
                 }
             )
         }
         composable(Screen.Home.route) {
             HomeScreen (
+                onSignOut = {
+                    navController.popBackStack(
+                        route = Screen.Login.route,
+                        inclusive = true
+                    )
+                    navController.navigate(Screen.Login.route)
+                }
+            )
+        }
+        composable(Screen.Sights.route) {
+            SightsScreen(
+                onListItemClick = {
+//                    navController.navigate(Screen.SightDetails.passId(it))
+                },
+                onFabClick = {
+//                    navController.navigate(Screen.SightCreate.route)
+                },
                 onSignOut = {
                     navController.popBackStack(
                         route = Screen.Login.route,

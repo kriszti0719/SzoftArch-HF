@@ -36,7 +36,7 @@ fun HomeScreen(
             .fillMaxSize(),
         topBar = {
             CitySeeAppBar(
-                title = stringResource(id = StringResources.app_bar_title_todos),
+                title = stringResource(id = StringResources.app_bar_title_sights),
                 actions = {
                     IconButton(onClick = {
                         onSignOut()

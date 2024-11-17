@@ -13,9 +13,29 @@
 
     <!--    Home  -->
     <string name="top_app_bar_title_home">Home</string>
-    <string name="app_bar_title_todos">Your todos</string>
+    <string name="app_bar_title_sights">Sights to visit</string>
     <string name="snackbar_message">Hello there!</string>
     <string name="welcome_home">What a beautiful day!</string>
     <string name="dropdown_menu_item_label_settings">Settings</string>
     <string name="dropdown_menu_item_label_profile">Profile</string>
+
+    <!--    TypeUis   -->
+    <string name="type_title_none">None</string>
+    <string name="type_title_museum">Museum</string>
+    <string name="type_title_historical_site">Historical Site</string>
+    <string name="type_title_park">Park</string>
+    <string name="type_title_art_gallery">Art Gallery</string>
+    <string name="type_title_theater">Theater</string>
+    <string name="type_title_zoo">Zoo</string>
+    <string name="type_title_market">Market</string>
+    <string name="type_title_bridge">Bridge</string>
+    <string name="type_title_observatory">Observatory</string>
+    <string name="type_title_castle">Castle</string>
+    <string name="type_title_church">Church</string>
+    <string name="type_title_library">Library</string>
+    <string name="type_title_restaurant">Restaurant</string>
+    <string name="type_title_bar">Bar</string>
+
+    <!--   SightsScreen    -->
+    <string name="text_empty_sight_list">There are no added sights yet.</string>
 </resources>
