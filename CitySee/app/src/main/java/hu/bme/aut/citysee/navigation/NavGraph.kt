@@ -4,12 +4,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import hu.bme.aut.citysee.feature.auth.login.LoginScreen
 import hu.bme.aut.citysee.feature.auth.register.RegisterScreen
 import hu.bme.aut.citysee.feature.home.HomeScreen
+import hu.bme.aut.citysee.feature.home_list.SightsScreen
+import hu.bme.aut.citysee.feature.sight_create.SightCreateScreen
+import hu.bme.aut.citysee.feature.sight_details.SightDetailsScreen
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -23,7 +28,7 @@ fun NavGraph(
         composable(Screen.Login.route) {
             LoginScreen(
                 onSuccess = {
-                    navController.navigate(Screen.Home.route)
+                    navController.navigate(Screen.Sights.route)
                 },
                 onRegisterClick = {
                     navController.navigate(Screen.Register.route)
@@ -40,7 +45,7 @@ fun NavGraph(
                     navController.navigate(Screen.Login.route)
                 },
                 onSuccess = {
-                    navController.navigate(Screen.Home.route)
+                    navController.navigate(Screen.Sights.route)
                 }
             )
         }
@@ -52,6 +57,50 @@ fun NavGraph(
                         inclusive = true
                     )
                     navController.navigate(Screen.Login.route)
+                }
+            )
+        }
+        composable(Screen.Sights.route) {
+            SightsScreen(
+                onListItemClick = {
+                    navController.navigate(Screen.SightDetails.passId(it))
+                },
+                onFabClick = {
+                    navController.navigate(Screen.SightCreate.route)
+                },
+                onSignOut = {
+                    navController.popBackStack(
+                        route = Screen.Login.route,
+                        inclusive = true
+                    )
+                    navController.navigate(Screen.Login.route)
+                }
+            )
+        }
+        composable(Screen.SightCreate.route) {
+            SightCreateScreen(onNavigateBack = {
+                navController.popBackStack(
+                    route = Screen.Sights.route,
+                    inclusive = true
+                )
+                navController.navigate(Screen.Sights.route)
+            })
+        }
+        composable(
+            route = Screen.SightDetails.route,
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            SightDetailsScreen(
+                onNavigateBack = {
+                    navController.popBackStack(
+                        route = Screen.Sights.route,
+                        inclusive = true
+                    )
+                    navController.navigate(Screen.Sights.route)
                 }
             )
         }
