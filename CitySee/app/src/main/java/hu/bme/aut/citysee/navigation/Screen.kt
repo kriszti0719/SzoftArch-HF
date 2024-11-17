@@ -14,5 +14,8 @@ sealed class Screen(val route: String) {
     object Settings: Screen(route = "settings")
 
     object Sights: Screen("sights")
-    object CreateSight: Screen("create")
+    object SightCreate: Screen("create")
+    object SightDetails: Screen("details/{id}") {
+        fun passId(id: String) = "details/$id"
+    }
 }

@@ -48,7 +48,8 @@ fun NormalTextField(
             }
         },
         modifier = modifier.width(TextFieldDefaults.MinWidth),
-        singleLine = true,
+        singleLine = false, // Allow multiple lines
+        maxLines = 5, // You can adjust this to your desired number of lines
         readOnly = readOnly,
         isError = isError,
         enabled = enabled,
@@ -63,7 +64,9 @@ fun NormalTextField(
             focusedContainerColor = MaterialTheme.colorScheme.surface,
             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
             focusedTextColor = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+            disabledTextColor = MaterialTheme.colorScheme.onSurface,
+            disabledContainerColor = MaterialTheme.colorScheme.surface
         ),
         shape = shape
     )

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
@@ -36,9 +35,9 @@ import kotlinx.coroutines.launch
 @ExperimentalComposeUiApi
 @ExperimentalMaterial3Api
 @Composable
-fun CreateSightScreen(
+fun SightCreateScreen(
     onNavigateBack: () -> Unit,
-    viewModel: CreateSightViewModel = viewModel(factory = CreateSightViewModel.Factory)
+    viewModel: SightCreateViewModel = viewModel(factory = SightCreateViewModel.Factory)
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -90,8 +89,12 @@ fun CreateSightScreen(
             contentAlignment = Alignment.Center
         ) {
             SightEditor(
-                titleValue = state.sight.name,
-                titleOnValueChange = { viewModel.onEvent(CreateSightEvent.ChangeName(it)) },
+                nameValue = state.sight.name,
+                nameOnValueChange = { viewModel.onEvent(CreateSightEvent.ChangeName(it)) },
+                addressValue = state.sight.address,
+                addressOnValueChange = { viewModel.onEvent(CreateSightEvent.ChangeAddress(it)) },
+                bonusInfoValue = state.sight.bonusInfo,
+                bonusInfoOnValueChange = { viewModel.onEvent(CreateSightEvent.ChangeBonusInfo(it)) },
                 descriptionValue = state.sight.description,
                 descriptionOnValueChange = { viewModel.onEvent(CreateSightEvent.ChangeDescription(it)) },
                 selectedType = state.sight.type,

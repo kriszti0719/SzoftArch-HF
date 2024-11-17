@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 data class SightUi(
     val id: String = "",
     val name: String = "",
-    val city: String = "",
+    val address: String = "",
     val type: TypeUi = TypeUi.None,
     val description: String = "",
     val bonusInfo: String = ""
@@ -17,7 +17,7 @@ data class SightUi(
 fun Sight.asSightUi(): SightUi = SightUi(
     id = id,
     name = name,
-    city = city,
+    address = address,
     type = type.asTypeUi(),
     description = description,
     bonusInfo = bonusInfo
@@ -26,7 +26,7 @@ fun Sight.asSightUi(): SightUi = SightUi(
 fun SightUi.asSight(): Sight = Sight(
     id = id,
     name = name,
-    city = city,
+    address = address,
     type = type.asType(),
     description = description,
     bonusInfo = bonusInfo

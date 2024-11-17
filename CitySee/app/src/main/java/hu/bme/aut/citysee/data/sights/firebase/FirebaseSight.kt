@@ -7,7 +7,7 @@ import hu.bme.aut.citysee.domain.model.Type
 data class FirebaseSight(
     @DocumentId val id: String = "",
     val name: String = "",
-    val city: String = "",
+    val address: String = "",
     val type: Type = Type.NONE,
     val description: String = "",
     val bonusInfo: String = ""
@@ -16,7 +16,7 @@ data class FirebaseSight(
 fun FirebaseSight.asSight() = Sight(
     id = id,
     name = name,
-    city = city,
+    address = address,
     type = type,
     description = description,
     bonusInfo = bonusInfo,
@@ -25,7 +25,7 @@ fun FirebaseSight.asSight() = Sight(
 fun Sight.asFirebaseSight() = FirebaseSight(
     id = id,
     name = name,
-    city = city,
+    address = address,
     type = type,
     description = description,
     bonusInfo = bonusInfo,

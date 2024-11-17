@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import hu.bme.aut.citysee.R
 import hu.bme.aut.citysee.domain.model.Sight
 import hu.bme.aut.citysee.ui.common.CitySeeAppBar
 import hu.bme.aut.citysee.ui.model.SightUi
@@ -127,6 +128,9 @@ fun SightsScreen(
                                         )
                                         Text(text = state.sights[i].name)
                                     }
+                                },
+                                supportingContent = {
+                                    Text( text = state.sights[i].address )
                                 },
                                 modifier = Modifier.clickable(onClick = {
                                     onListItemClick(

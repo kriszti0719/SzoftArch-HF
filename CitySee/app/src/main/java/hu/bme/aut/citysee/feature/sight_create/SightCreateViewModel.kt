@@ -20,9 +20,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
-class CreateSightViewModel constructor(
+class SightCreateViewModel constructor(
     private val sightService: SightService
 ) : ViewModel() {
 
@@ -40,10 +39,10 @@ class CreateSightViewModel constructor(
                     sight = it.sight.copy(name = newValue)
                 ) }
             }
-            is CreateSightEvent.ChangeCity -> {
+            is CreateSightEvent.ChangeAddress -> {
                 val newValue = event.text
                 _state.update { it.copy(
-                    sight = it.sight.copy(city = newValue)
+                    sight = it.sight.copy(address = newValue)
                 ) }
             }
             is CreateSightEvent.ChangeDescription -> {
@@ -87,7 +86,7 @@ class CreateSightViewModel constructor(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val sightService = CitySeeApplication.sightService
-                CreateSightViewModel(
+                SightCreateViewModel(
                     sightService = sightService,
                 )
             }
@@ -101,7 +100,7 @@ data class CreateSightState(
 
 sealed class CreateSightEvent {
     data class ChangeName(val text: String): CreateSightEvent()
-    data class ChangeCity(val text: String): CreateSightEvent()
+    data class ChangeAddress(val text: String): CreateSightEvent()
     data class ChangeDescription(val text: String): CreateSightEvent()
     data class ChangeBonusInfo(val text: String): CreateSightEvent()
     data class SelectType(val type: TypeUi): CreateSightEvent()
