@@ -21,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import hu.bme.aut.citysee.feature.home.HomeScreen
 import hu.bme.aut.citysee.ui.common.EmailTextField
 import hu.bme.aut.citysee.ui.common.PasswordTextField
 import hu.bme.aut.citysee.util.UiEvent

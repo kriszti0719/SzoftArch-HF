@@ -1,22 +1,14 @@
 package hu.bme.aut.citysee.data.city.firebase
 
-import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.ktx.snapshots
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
-import hu.bme.aut.citysee.data.auth.AuthService
 import hu.bme.aut.citysee.data.city.CityService
 import hu.bme.aut.citysee.data.sights.firebase.FirebaseSightService
 import hu.bme.aut.citysee.domain.model.City
 import hu.bme.aut.citysee.domain.model.Sight
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
 class FirebaseCityService(

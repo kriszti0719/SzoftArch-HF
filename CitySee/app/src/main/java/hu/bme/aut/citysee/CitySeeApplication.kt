@@ -6,7 +6,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import hu.bme.aut.citysee.data.auth.AuthService
 import hu.bme.aut.citysee.data.auth.FirebaseAuthService
 import hu.bme.aut.citysee.data.city.CityService
-import hu.bme.aut.citysee.data.city.firebase.FirebaseCity
 import hu.bme.aut.citysee.data.city.firebase.FirebaseCityService
 import hu.bme.aut.citysee.data.sights.SightService
 import hu.bme.aut.citysee.data.sights.firebase.FirebaseSightService
