@@ -1,6 +1,5 @@
 package hu.bme.aut.citysee.data.city.firebase
 
-import hu.bme.aut.citysee.data.sights.firebase.FirebaseSightService
 import com.google.firebase.firestore.DocumentId
 import hu.bme.aut.citysee.domain.model.City
 import hu.bme.aut.citysee.domain.model.Sight
