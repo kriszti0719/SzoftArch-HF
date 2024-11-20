@@ -1,8 +1,14 @@
 package hu.bme.aut.citysee.feature.sight_details
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -28,6 +34,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import hu.bme.aut.citysee.R
@@ -36,6 +43,12 @@ import hu.bme.aut.citysee.ui.common.SightEditor
 import hu.bme.aut.citysee.ui.model.SightUi
 import hu.bme.aut.citysee.util.UiEvent
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.filled.Add
+import coil.compose.rememberAsyncImagePainter
+
+
 
 @ExperimentalComposeUiApi
 @ExperimentalMaterial3Api
@@ -46,6 +59,13 @@ fun SightDetailsScreen (
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            // Upload selected image to storage and update the sight's photos list in firebase
+            viewModel.uploadSightPhoto(uri) { success ->}
+        }
+    }
 
     var showDialog by remember { mutableStateOf(false) }
     val hostState = remember { SnackbarHostState() }
@@ -136,9 +156,12 @@ fun SightDetailsScreen (
                     descriptionOnValueChange = { viewModel.onEvent(CheckSightEvent.ChangeDescription(it)) },
                     selectedType = sight.type,
                     onTypeSelected = { viewModel.onEvent(CheckSightEvent.SelectType(it)) },
+                    photos = sight.photos,
+                    imagePickerLauncher = imagePickerLauncher::launch,
                     modifier = Modifier,
                     enabled = state.isEditingSight
                 )
+
             }
         }
     }

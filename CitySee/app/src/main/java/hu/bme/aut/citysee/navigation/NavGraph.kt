@@ -13,6 +13,7 @@ import hu.bme.aut.citysee.feature.auth.login.LoginScreen
 import hu.bme.aut.citysee.feature.auth.register.RegisterScreen
 import hu.bme.aut.citysee.feature.home.HomeScreen
 import hu.bme.aut.citysee.feature.home_list.SightsScreen
+import hu.bme.aut.citysee.feature.profile.ProfileScreen
 import hu.bme.aut.citysee.feature.sight_create.SightCreateScreen
 import hu.bme.aut.citysee.feature.sight_details.SightDetailsScreen
 
@@ -74,6 +75,25 @@ fun NavGraph(
                         inclusive = true
                     )
                     navController.navigate(Screen.Login.route)
+                },
+                onProfileClick = {
+                    navController.navigate(Screen.Profile.route)
+                }
+            )
+        }
+        composable(Screen.Profile.route) {
+            ProfileScreen(
+                onNavigateBack = {
+                    navController.popBackStack(
+                        route = Screen.Sights.route,
+                        inclusive = false
+                    )
+                }
+                , onSignOut = {
+                    navController.popBackStack(
+                        route = Screen.Login.route,
+                        inclusive = false
+                    )
                 }
             )
         }

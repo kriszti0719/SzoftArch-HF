@@ -88,7 +88,7 @@ fun HomeScreen(
 }
 
 @ExperimentalMaterial3Api
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
 fun HomeScreen_Preview() {
     HomeScreen(        onSignOut = {},
