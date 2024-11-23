@@ -21,4 +21,5 @@ sealed class Screen(val route: String) {
     object CityMap: Screen("cityMap/{id}") {
         fun passId(id: String) = "cityMap/$id"
     }
+    object Cities: Screen("cities")
 }

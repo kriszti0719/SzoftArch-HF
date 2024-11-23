@@ -17,6 +17,7 @@ import hu.bme.aut.citysee.feature.map.CityMapScreen
 import hu.bme.aut.citysee.feature.profile.ProfileScreen
 import hu.bme.aut.citysee.feature.sight_create.SightCreateScreen
 import hu.bme.aut.citysee.feature.sight_details.SightDetailsScreen
+import hu.bme.aut.citysee.feature.home_cities.CitiesScreen
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -25,13 +26,13 @@ fun NavGraph(
 ) {
     NavHost(
         navController = navController,
-        //startDestination = Screen.Login.route
-        startDestination = Screen.CityMap.passId("a8ILKBpSELkxln9MZUmy")
+        startDestination = Screen.Login.route
+        //startDestination = Screen.CityMap.passId("a8ILKBpSELkxln9MZUmy")
     ) {
         composable(Screen.Login.route) {
             LoginScreen(
                 onSuccess = {
-                    navController.navigate(Screen.Sights.route)
+                    navController.navigate(Screen.Cities.route)
                 },
                 onRegisterClick = {
                     navController.navigate(Screen.Register.route)
@@ -133,6 +134,16 @@ fun NavGraph(
             }
         )){
             CityMapScreen()
+        }
+        composable(route = Screen.Cities.route) {
+            CitiesScreen(
+                onCityClick = {
+                    navController.navigate(Screen.CityMap.passId(it))
+                },
+                onProfileClick = {
+                    navController.navigate(Screen.Profile.route)
+                }
+            )
         }
     }
 }
