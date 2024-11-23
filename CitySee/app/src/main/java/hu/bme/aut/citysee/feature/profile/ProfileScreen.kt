@@ -159,6 +159,8 @@ fun ProfileScreen(
                         Text("Save changes")
                     }
 
+                    Text("Points:${state.points}")
+
                     // logout button at the bottom of the page
                     Spacer(modifier = Modifier.weight(1f))
                     Button(
