@@ -62,7 +62,8 @@ class FirebaseAuthService(private val firebaseAuth: FirebaseAuth) : AuthService 
                 name = user.displayName ?: "",
                 id = user.uid,
                 email = user.email ?: "",
-                profileImageUrl = user.photoUrl?.toString()
+                profileImageUrl = FirebaseStorage.getInstance().reference.child("profile_pics/${user.email.hashCode()}.jpg")
+                    .toString()
             )
         } else {
             throw Exception("User not authenticated")

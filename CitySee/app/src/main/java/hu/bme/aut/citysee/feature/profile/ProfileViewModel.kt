@@ -1,6 +1,7 @@
 package hu.bme.aut.citysee.feature.profile
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -8,6 +9,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.lifecycle.viewmodel.initializer
 import hu.bme.aut.citysee.CitySeeApplication
 import hu.bme.aut.citysee.data.auth.AuthService
+import hu.bme.aut.citysee.domain.model.Badge
 import hu.bme.aut.citysee.domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,8 +38,12 @@ class ProfileViewModel constructor(
                         isLoading = false,
                         name = user.name,
                         id = user.id,
-                        email = user.email
+                        email = user.email,
+                        profileImageUrl = user.profileImageUrl
                     )
+                }
+                if (user.profileImageUrl != null) {
+                    Log.e("profile image url", user.profileImageUrl)
                 }
             } catch (e: Exception) {
                 _state.update { it.copy(isLoading = false, error = e) }
@@ -115,5 +121,7 @@ data class ProfileState(
     val name: String = "",
     val id: String = "",
     val profileImageUrl: String? = null,
-    var points: Int? = 0
+    var points: Int? = 0,
+    val badges: List<Badge> = emptyList()
+
 )
