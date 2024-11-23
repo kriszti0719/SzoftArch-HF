@@ -50,6 +50,7 @@ class ProfileViewModel constructor(
             val user = authService.getCurrentUser()
             _state.update {
                 it.copy(profileImageUrl = user.profileImageUrl)
+                it.copy(points = user.points)
             }
         }
     }
@@ -113,5 +114,6 @@ data class ProfileState(
     val email : String = "",
     val name: String = "",
     val id: String = "",
-    val profileImageUrl: String? = null
+    val profileImageUrl: String? = null,
+    var points: Int? = 0
 )

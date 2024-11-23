@@ -50,4 +50,6 @@
     <string name="textfield_label_description">Description</string>
     <string name="textfield_label_bonusInfo">Bonus info</string>
     <string name="app_bar_title_edit_sight">Edit Sight</string>
+    <string name="app_bar_title_cities">Choose a City</string>
+
 </resources>
