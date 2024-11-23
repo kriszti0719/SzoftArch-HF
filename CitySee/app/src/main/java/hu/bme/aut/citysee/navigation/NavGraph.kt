@@ -13,6 +13,7 @@ import hu.bme.aut.citysee.feature.auth.login.LoginScreen
 import hu.bme.aut.citysee.feature.auth.register.RegisterScreen
 import hu.bme.aut.citysee.feature.home.HomeScreen
 import hu.bme.aut.citysee.feature.home_list.SightsScreen
+import hu.bme.aut.citysee.feature.map.CityMapScreen
 import hu.bme.aut.citysee.feature.profile.ProfileScreen
 import hu.bme.aut.citysee.feature.sight_create.SightCreateScreen
 import hu.bme.aut.citysee.feature.sight_details.SightDetailsScreen
@@ -24,7 +25,8 @@ fun NavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route
+        //startDestination = Screen.Login.route
+        startDestination = Screen.CityMap.passId("a8ILKBpSELkxln9MZUmy")
     ) {
         composable(Screen.Login.route) {
             LoginScreen(
@@ -123,6 +125,14 @@ fun NavGraph(
                     navController.navigate(Screen.Sights.route)
                 }
             )
+        }
+        composable(route = Screen.CityMap.route,
+            arguments = listOf(
+            navArgument("id") {
+                type = NavType.StringType
+            }
+        )){
+            CityMapScreen()
         }
     }
 }

@@ -1,11 +1,11 @@
 package hu.bme.aut.citysee.feature.map
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,9 +20,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import hu.bme.aut.citysee.ui.model.SightUi
 
 @Composable
 fun CityMapScreen(
@@ -33,12 +32,11 @@ fun CityMapScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     var isMapLoaded by remember { mutableStateOf(!state.isLoading) }
     if(!state.isLoading){
-        var pos = state.city?.let { com.google.android.gms.maps.model.LatLng(it.latitude, it.longitude) }!!
-
-        var cameraPos = rememberCameraPositionState{
+        val pos = state.city?.let { com.google.android.gms.maps.model.LatLng(it.latitude, it.longitude) }!!
+        val cameraPos = rememberCameraPositionState{
             position = CameraPosition.fromLatLngZoom(pos, 10f)
         }
-
+        var sights: List<SightUi> = state.city!!.sights
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -50,11 +48,7 @@ fun CityMapScreen(
                 cameraPositionState = cameraPos,
                 onMapLoaded = { isMapLoaded = true }
             ) {
-                Marker(
-                    state = MarkerState(position = pos),
-                    title = state.city?.name,
-                    snippet = "Marker in Null island"
-                )
+                MapMarkerContent(sights)
             }
 
             if (!isMapLoaded || state.isLoading) {

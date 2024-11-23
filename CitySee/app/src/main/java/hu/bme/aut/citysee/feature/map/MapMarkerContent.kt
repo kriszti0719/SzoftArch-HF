@@ -1,9 +1,9 @@
 package hu.bme.aut.citysee.feature.map
 
 import androidx.compose.runtime.Composable
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.GoogleMapComposable
 import com.google.maps.android.compose.rememberMarkerState
 import hu.bme.aut.citysee.ui.model.SightUi
@@ -12,19 +12,19 @@ import hu.bme.aut.citysee.ui.model.SightUi
 @GoogleMapComposable
 fun MapMarkerContent(
     sights: List<SightUi>,
-    onMountainClick: (Marker) -> Boolean = { false }
+    onLocationClick: (Marker) -> Boolean = { false }
 ) {
     sights.forEach { sight ->
+
         Marker(
-            state = rememberMarkerState(position = sight.),
+            state = rememberMarkerState(position = LatLng(sight.latitude, sight.longitude)),
             title = sight.name,
-            snippet = sight.elevation.toElevationString(),
+            snippet = sight.address,
             tag = sight,
             onClick = { marker ->
-                onMountainClick(marker)
+                onLocationClick(marker)
                 false
             },
-            zIndex = if (mountain.is14er()) 5f else 2f
         )
     }
 }
