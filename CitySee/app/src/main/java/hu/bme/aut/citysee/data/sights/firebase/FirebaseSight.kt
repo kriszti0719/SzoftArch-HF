@@ -1,6 +1,8 @@
 package hu.bme.aut.citysee.data.sights.firebase
 
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.GeoPoint
+import com.google.type.LatLng
 import hu.bme.aut.citysee.domain.model.Sight
 import hu.bme.aut.citysee.domain.model.Type
 
@@ -10,8 +12,8 @@ data class FirebaseSight(
     val address: String = "",
     val type: Type = Type.NONE,
     val description: String = "",
-    val bonusInfo: String = ""
-)
+    val bonusInfo: String = "",
+    val photos: List<String> = emptyList(), )
 
 fun FirebaseSight.asSight() = Sight(
     id = id,
@@ -20,6 +22,7 @@ fun FirebaseSight.asSight() = Sight(
     type = type,
     description = description,
     bonusInfo = bonusInfo,
+    photos = photos,
 )
 
 fun Sight.asFirebaseSight() = FirebaseSight(
@@ -29,4 +32,5 @@ fun Sight.asFirebaseSight() = FirebaseSight(
     type = type,
     description = description,
     bonusInfo = bonusInfo,
+    photos = photos,
 )

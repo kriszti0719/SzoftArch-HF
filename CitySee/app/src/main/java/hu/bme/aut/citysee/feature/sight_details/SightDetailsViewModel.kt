@@ -1,5 +1,6 @@
 package hu.bme.aut.citysee.feature.sight_details
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -91,6 +92,25 @@ class SightDetailsViewModel  constructor(
         load()
     }
 
+    fun uploadSightPhoto(uri: Uri?, onComplete: (Boolean) -> Unit) {
+        val currentSight = state.value.sight
+        if (currentSight != null && uri != null) { // Ensure sight and URI are not null
+            viewModelScope.launch {
+                sightService.uploadSightPhoto(currentSight,false, uri) { success ->
+                    if (success) {
+                        val updatedSight = currentSight.copy(
+                            photos = currentSight.photos + uri.toString() // Add the new photo to the list
+                        )
+                        _state.update { it.copy(sight = updatedSight) } // Update sight in state
+                    }
+                    onComplete(success)
+                }
+            }
+        } else {
+            onComplete(false) // Handle the case where sight or URI is null
+        }
+    }
+
     private fun load() {
         val sightId = checkNotNull<String>(savedState["id"])
         viewModelScope.launch {
@@ -147,10 +167,10 @@ class SightDetailsViewModel  constructor(
 }
 
 data class CheckSightState(
-    val sight: SightUi? = null,
+    var sight: SightUi? = null,
     val isLoadingSight: Boolean = false,
     val isEditingSight: Boolean = false,
-    val error: Throwable? = null
+    val error: Throwable? = null,
 )
 
 sealed class CheckSightEvent {

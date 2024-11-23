@@ -63,4 +63,8 @@ dependencies {
     implementation(platform(libs.firebaseBom))
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
+
+    implementation("com.google.firebase:firebase-storage:20.1.0") // storgae for the images
+    implementation("androidx.activity:activity-ktx:1.4.0")  // For the activity result APIs
+    implementation("io.coil-kt:coil-compose:2.1.0")         // For loading images
 }

@@ -54,7 +54,6 @@ fun TypeDropDown(
     )
 
     val shape = RoundedCornerShape(5.dp)
-
     Surface(
         modifier = modifier
             .clip(shape = shape)
@@ -86,17 +85,19 @@ fun TypeDropDown(
                 text = stringResource(id = selectedType.title),
                 style = MaterialTheme.typography.labelMedium
             )
-            IconButton(
-                modifier = Modifier
-                    .rotate(degrees = angle)
-                    .weight(weight = 1.5f),
-                onClick = { expanded = true }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = null,
-                    modifier = Modifier.padding(start = 5.dp)
-                )
+            if (enabled) { // only allow the user to switch the type if in edit mode
+                IconButton(
+                    modifier = Modifier
+                        .rotate(degrees = angle)
+                        .weight(weight = 1.5f),
+                    onClick = { expanded = true },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = null,
+                        modifier = Modifier.padding(start = 5.dp)
+                    )
+                }
             }
             DropdownMenu(
                 modifier = modifier
@@ -135,7 +136,7 @@ fun TypeDropDown(
 
 @ExperimentalMaterial3Api
 @Composable
-@Preview
+//@Preview
 fun TypeDropdown_Preview() {
     val types = listOf(
         TypeUi.None,

@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -49,6 +50,7 @@ fun SightsScreen(
     onListItemClick: (String) -> Unit,
     onFabClick: () -> Unit,
     onSignOut: () -> Unit,
+    onProfileClick: () -> Unit,
     viewModel: SightsViewModel = viewModel(factory = SightsViewModel.Factory)
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -61,10 +63,13 @@ fun SightsScreen(
                 title = stringResource(id = StringResources.app_bar_title_sights),
                 actions = {
                     IconButton(onClick = {
-                        viewModel.signOut()
-                        onSignOut()
+                        onProfileClick()
                     }) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = null)
+                        Icon(
+                            imageVector = Icons.Default.Person, // Replace with a profile-related icon if available
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
                     }
                 }
             )

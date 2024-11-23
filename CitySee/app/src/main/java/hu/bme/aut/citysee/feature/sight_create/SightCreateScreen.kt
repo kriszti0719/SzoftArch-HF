@@ -1,5 +1,8 @@
 package hu.bme.aut.citysee.feature.sight_create
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -40,13 +43,20 @@ fun SightCreateScreen(
     viewModel: SightCreateViewModel = viewModel(factory = SightCreateViewModel.Factory)
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            // Upload selected image to storage and update the sight's photos list in firebase
+            viewModel.storeImagesDuringSightCreation(uri, context = context)
+        }
+    }
 
     var showDialog by remember { mutableStateOf(false) }
     val hostState = remember { SnackbarHostState() }
 
     val scope = rememberCoroutineScope()
 
-    val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { uiEvent ->
@@ -99,6 +109,8 @@ fun SightCreateScreen(
                 descriptionOnValueChange = { viewModel.onEvent(CreateSightEvent.ChangeDescription(it)) },
                 selectedType = state.sight.type,
                 onTypeSelected = { viewModel.onEvent(CreateSightEvent.SelectType(it)) },
+                photos = state.currentPhotos,
+                imagePickerLauncher = imagePickerLauncher::launch,
                 modifier = Modifier
             )
         }
