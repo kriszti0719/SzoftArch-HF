@@ -104,7 +104,7 @@ fun SightsScreen(
             } else if (state.isError) {
                 Text(
                     text = state.error?.toUiText()?.asString(context)
-                        ?: stringResource(id = StringResources.some_error_message)
+                        ?: stringResource(id = StringResources.default_error_message)
                 )
             } else {
                 if (state.sights.isEmpty()) {

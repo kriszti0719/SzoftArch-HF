@@ -15,6 +15,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -43,6 +45,10 @@ fun RegisterScreen(
     val scope = rememberCoroutineScope()
 
     val context = LocalContext.current
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
@@ -109,7 +115,10 @@ fun RegisterScreen(
             )
             Spacer(modifier = Modifier.height(30.dp))
             Button(
-                onClick = { viewModel.onEvent(RegisterUserEvent.SignUp)},
+                onClick = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                    viewModel.onEvent(RegisterUserEvent.SignUp)},
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.secondary, // Gomb háttérszíne
                     contentColor = MaterialTheme.colorScheme.tertiary // Gomb szövegének színe
