@@ -43,38 +43,40 @@ class CityMapViewModel constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     init {
-        loadCity()
-        loadSights()
-    }
-
-    private fun loadCity() {
-        val cityId = checkNotNull<String>(savedState["id"])
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            try {
-                val city = cityService.getCity(cityId)
-                if (city != null) {
-                    sightIds = city.sights
-                    currentCity = city.asCityUi()
-                }
-            } catch (e: Exception) {
-                _uiEvent.send(UiEvent.Failure(e.toUiText()))
-            }
+            loadCity()
+            loadSights()
         }
     }
-    private fun loadSights() {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            try {
-                var citySights = emptyList<SightUi>()
-                for(id in sightIds){
-                    sightService.getSight(id)?.let { citySights.plus(it.asSightUi()) }
-                }
-                currentCity.sights = citySights
-                _state.update {it.copy(isLoading = false, city = currentCity) }
-            } catch (e: Exception) {
-                _uiEvent.send(UiEvent.Failure(e.toUiText()))
+
+    private suspend fun loadCity() {
+        val cityId = checkNotNull<String>(savedState["id"])
+        _state.update { it.copy(isLoading = true) }
+        try {
+            val city = cityService.getCity(cityId)
+            if (city != null) {
+                sightIds = city.sights
+                Log.e("AAAAAAAAAAAAAAAAAAAAAAAAA", sightIds.toString())
+                currentCity = city.asCityUi()
             }
+            _state.update {it.copy(isLoading = false, city = currentCity) }
+        } catch (e: Exception) {
+            _uiEvent.send(UiEvent.Failure(e.toUiText()))
+        }
+    }
+    private suspend fun loadSights() {
+        _state.update { it.copy(isLoading = true) }
+        try {
+            val citySights = mutableListOf<SightUi>()
+            Log.e("Sights", sightIds.toString())
+            for(id in sightIds){
+                sightService.getSight(id)?.let { citySights.add(it.asSightUi()) }
+            }
+            currentCity.sights = citySights
+            Log.e("Sights", currentCity.sights.toString())
+            _state.update {it.copy(isLoading = false, city = currentCity) }
+        } catch (e: Exception) {
+            _uiEvent.send(UiEvent.Failure(e.toUiText()))
         }
     }
 
