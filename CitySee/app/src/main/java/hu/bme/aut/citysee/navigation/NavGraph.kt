@@ -100,11 +100,12 @@ fun NavGraph(
         }
         composable(Screen.SightCreate.route) {
             SightCreateScreen(onNavigateBack = {
-                navController.popBackStack(
+                navController.popBackStack()
+/*                navController.popBackStack(
                     route = Screen.Sights.route,
                     inclusive = true
                 )
-                navController.navigate(Screen.Sights.route)
+                navController.navigate(Screen.CityMap.route)*/
             })
         }
         composable(
@@ -137,6 +138,9 @@ fun NavGraph(
                 },
                 onProfileClick = {
                     navController.navigate(Screen.Profile.route)
+                }
+                , onFabClick = {
+                    navController.navigate(Screen.SightCreate.route)
                 }
             )
         }

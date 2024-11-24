@@ -75,14 +75,21 @@ fun SightsScreen(
             )
         },
         floatingActionButton = {
-            LargeFloatingActionButton(
-                onClick = onFabClick,
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+            Box(
+                modifier = Modifier.fillMaxSize() // Ensure the Box takes the full screen
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                LargeFloatingActionButton(
+                    onClick = onFabClick,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .padding(16.dp) // Padding from edges
+                        .align(Alignment.BottomStart) // Align to bottom-left corner
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                }
             }
-        }
+        },
     ) { padding ->
         Box(
             modifier = Modifier

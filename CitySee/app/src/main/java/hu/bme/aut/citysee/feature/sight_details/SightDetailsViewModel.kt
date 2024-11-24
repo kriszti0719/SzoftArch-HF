@@ -10,6 +10,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import hu.bme.aut.citysee.CitySeeApplication
 import hu.bme.aut.citysee.data.sights.SightService
+import hu.bme.aut.citysee.feature.sight_create.CreateSightEvent
 import hu.bme.aut.citysee.ui.model.SightUi
 import hu.bme.aut.citysee.ui.model.TypeUi
 import hu.bme.aut.citysee.ui.model.asSight
@@ -76,6 +77,13 @@ class SightDetailsViewModel  constructor(
                 val newValue = event.type
                 _state.update { it.copy(
                     sight = it.sight?.copy(type = newValue)
+                ) }
+            }
+            is CheckSightEvent.UpdateCoordinates -> {
+                val newLatitude = event.latitude
+                val newLongitude = event.longitude
+                _state.update { it.copy(
+                    sight = it.sight?.copy(latitude = newLatitude, longitude = newLongitude)
                 ) }
             }
             // TODO: Ez később kiszedhető, de most debugra szerintem gyorsabb megoldás lenne, benne hagynám egy időre
@@ -181,6 +189,7 @@ sealed class CheckSightEvent {
     data class ChangeBonusInfo(val text: String): CheckSightEvent()
     data class ChangeDescription(val text: String): CheckSightEvent()
     data class SelectType(val type: TypeUi): CheckSightEvent()
+    data class UpdateCoordinates(val latitude: Double, val longitude: Double) : CheckSightEvent() // New event
     object DeleteSight: CheckSightEvent()
     object UpdateSight: CheckSightEvent()
 }

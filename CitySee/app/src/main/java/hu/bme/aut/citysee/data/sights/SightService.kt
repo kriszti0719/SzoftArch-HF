@@ -19,4 +19,6 @@ interface SightService {
     suspend fun uploadSightPhoto(sight :SightUi,sightCreate: Boolean, uri: Uri?, onComplete: (Boolean) -> Unit)
 
     suspend fun fetchTempPhotos() : List<String>
+
+    suspend fun getAllSights(): List<Sight>
 }

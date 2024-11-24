@@ -29,11 +29,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.libraries.places.api.Places
 import hu.bme.aut.citysee.R
 import hu.bme.aut.citysee.ui.common.CitySeeAppBar
 import hu.bme.aut.citysee.ui.common.SightEditor
 import hu.bme.aut.citysee.util.UiEvent
 import kotlinx.coroutines.launch
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken
+import com.google.android.libraries.places.api.model.AutocompletePrediction
+import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
+
 
 @ExperimentalComposeUiApi
 @ExperimentalMaterial3Api
@@ -55,6 +63,11 @@ fun SightCreateScreen(
     var showDialog by remember { mutableStateOf(false) }
     val hostState = remember { SnackbarHostState() }
 
+    var coordinates by remember { mutableStateOf<Pair<Double, Double>?>(null) }
+    val onCoordinatesFetched: (Double, Double) -> Unit = { lat, lng ->
+        coordinates = lat to lng
+        viewModel.onEvent(CreateSightEvent.UpdateCoordinates(lat, lng))
+    }
     val scope = rememberCoroutineScope()
 
 
@@ -111,6 +124,7 @@ fun SightCreateScreen(
                 onTypeSelected = { viewModel.onEvent(CreateSightEvent.SelectType(it)) },
                 photos = state.currentPhotos,
                 imagePickerLauncher = imagePickerLauncher::launch,
+                onCoordinatesFetched = onCoordinatesFetched,
                 modifier = Modifier
             )
         }

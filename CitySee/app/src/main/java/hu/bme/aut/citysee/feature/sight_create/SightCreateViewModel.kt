@@ -68,6 +68,13 @@ class SightCreateViewModel constructor(
                     sight = it.sight.copy(type = newValue)
                 ) }
             }
+            is CreateSightEvent.UpdateCoordinates -> {
+                val newLatitude = event.latitude
+                val newLongitude = event.longitude
+                _state.update { it.copy(
+                    sight = it.sight.copy(latitude = newLatitude, longitude = newLongitude)
+                ) }
+            }
             CreateSightEvent.SaveSight -> {
                 onSave()
             }
@@ -157,5 +164,6 @@ sealed class CreateSightEvent {
     data class ChangeDescription(val text: String): CreateSightEvent()
     data class ChangeBonusInfo(val text: String): CreateSightEvent()
     data class SelectType(val type: TypeUi): CreateSightEvent()
+    data class UpdateCoordinates(val latitude: Double, val longitude: Double) : CreateSightEvent() // New event
     object SaveSight: CreateSightEvent()
 }

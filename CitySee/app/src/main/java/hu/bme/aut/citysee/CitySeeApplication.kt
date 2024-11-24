@@ -10,6 +10,7 @@ import hu.bme.aut.citysee.data.city.CityService
 import hu.bme.aut.citysee.data.city.firebase.FirebaseCityService
 import hu.bme.aut.citysee.data.sights.SightService
 import hu.bme.aut.citysee.data.sights.firebase.FirebaseSightService
+import com.google.android.libraries.places.api.Places
 
 class CitySeeApplication : Application(){
     override fun onCreate() {
@@ -20,6 +21,7 @@ class CitySeeApplication : Application(){
         cityService = FirebaseCityService(FirebaseFirestore.getInstance(),
             sightService as FirebaseSightService
         )
+        Places.initialize(this,"AIzaSyBwXUd_3ES8B4bKaHkWL-xJQUP631rtzrc")
     }
 
     companion object{

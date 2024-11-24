@@ -47,7 +47,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.filled.Add
 import coil.compose.rememberAsyncImagePainter
-
+import hu.bme.aut.citysee.feature.sight_create.CreateSightEvent
 
 
 @ExperimentalComposeUiApi
@@ -73,6 +73,12 @@ fun SightDetailsScreen (
     val scope = rememberCoroutineScope()
 
     val context = LocalContext.current
+
+    var coordinates by remember { mutableStateOf<Pair<Double, Double>?>(null) }
+    val onCoordinatesFetched: (Double, Double) -> Unit = { lat, lng ->
+        coordinates = lat to lng
+        viewModel.onEvent(CheckSightEvent.UpdateCoordinates(lat, lng))
+    }
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { uiEvent ->
@@ -159,6 +165,7 @@ fun SightDetailsScreen (
                     photos = sight.photos,
                     imagePickerLauncher = imagePickerLauncher::launch,
                     modifier = Modifier,
+                    onCoordinatesFetched = onCoordinatesFetched,
                     enabled = state.isEditingSight
                 )
 

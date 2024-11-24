@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.text.get
 
 class FirebaseSightService(
     private val firestore: FirebaseFirestore,
@@ -241,6 +242,21 @@ class FirebaseSightService(
             .document(sightId)
             .update("photos", updatedPhotos)
             .await()
+    }
+
+    override suspend fun getAllSights(): List<Sight> {
+        return try {
+            // Fetch all documents from the global sights collection
+            val snapshot = firestore.collection(GLOBAL_SIGHT_COLLECTION)
+                .get()
+                .await()
+
+            // Convert each document to a Sight object
+            snapshot.toObjects<FirebaseSight>().map { it.asSight() }
+        } catch (e: Exception) {
+            Log.e("FirebaseSightService", "Error fetching all sights", e)
+            emptyList() // Return an empty list if an error occurs
+        }
     }
 
     companion object {
