@@ -1,6 +1,7 @@
 package hu.bme.aut.citysee.feature.profile
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -29,6 +30,8 @@ import coil.compose.rememberAsyncImagePainter
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import coil.compose.AsyncImagePainter
+import com.google.firebase.storage.FirebaseStorage
 import hu.bme.aut.citysee.domain.model.User
 
 
@@ -42,6 +45,7 @@ fun ProfileScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     var username by remember { mutableStateOf(TextFieldValue(state.name)) }
     var isUpdated by remember { mutableStateOf(false) }
+    var imageUrl by remember { mutableStateOf<String?>(null) }
 
     // focus requester for the username input field
     val focusManager = LocalFocusManager.current
@@ -86,17 +90,33 @@ fun ProfileScreen(
                         contentAlignment = Alignment.Center
 
                     ) {
-                        // If the user has set a profile picture, show it; otherwise, show a placeholder
+                        val gsUrl = state.profileImageUrl
+
+                        if (gsUrl != null) {
+                            val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(gsUrl)
+
+                            storageReference.downloadUrl.addOnSuccessListener { uri ->
+                                // The URI is the HTTPS URL of the file
+                                imageUrl = uri.toString()
+
+                            }
+                        }
+                        // You can now use the httpsUrl with Coil
                         Image(
-                            painter = rememberAsyncImagePainter(
-                                state.profileImageUrl ?: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
-                            ),
+                            painter = rememberAsyncImagePainter(imageUrl?:"https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
+                                onState = { state ->
+                                    // Optionally log or handle the state of the image loading (e.g., success, error)
+                                    if (state is AsyncImagePainter.State.Error) {
+                                        Log.e("Image Load Error", state.result.throwable.message ?: "Unknown error")
+                                    }
+                                }),
                             contentDescription = "Profile Picture",
                             modifier = Modifier
                                 .size(100.dp)
                                 .clip(CircleShape),
                             contentScale = ContentScale.Crop
                         )
+
 
                         // Button to select a new profile picture
                         IconButton(

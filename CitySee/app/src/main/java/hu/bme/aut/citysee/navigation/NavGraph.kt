@@ -87,10 +87,7 @@ fun NavGraph(
         composable(Screen.Profile.route) {
             ProfileScreen(
                 onNavigateBack = {
-                    navController.popBackStack(
-                        route = Screen.Sights.route,
-                        inclusive = false
-                    )
+                    navController.popBackStack()
                 }
                 , onSignOut = {
                     navController.popBackStack(
@@ -120,10 +117,10 @@ fun NavGraph(
             SightDetailsScreen(
                 onNavigateBack = {
                     navController.popBackStack(
-                        route = Screen.Sights.route,
-                        inclusive = true
+                        route = Screen.CityMap.route,
+                        inclusive = false
                     )
-                    navController.navigate(Screen.Sights.route)
+                    //navController.navigate(Screen.CityMap.route)
                 }
             )
         }
@@ -133,7 +130,14 @@ fun NavGraph(
                 type = NavType.StringType
             }
         )){
-            CityMapScreen()
+            CityMapScreen(
+                onMarkerClick = {
+                    navController.navigate(Screen.SightDetails.passId(it))
+                },
+                onProfileClick = {
+                    navController.navigate(Screen.Profile.route)
+                }
+            )
         }
         composable(route = Screen.Cities.route) {
             CitiesScreen(

@@ -7,62 +7,97 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import hu.bme.aut.citysee.R
+import hu.bme.aut.citysee.ui.common.CitySeeAppBar
 import hu.bme.aut.citysee.ui.model.SightUi
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CityMapScreen(
-    //paddingValues: PaddingValues,
+    onMarkerClick: (String) -> Unit,
+    onProfileClick: () -> Unit,
     viewModel: CityMapViewModel = viewModel(factory = CityMapViewModel.Factory)
-    //eventFlow: Flow<MountainsScreenEvent>,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var isMapLoaded by remember { mutableStateOf(!state.isLoading) }
-    if(!state.isLoading){
-        val pos = state.city?.let { com.google.android.gms.maps.model.LatLng(it.latitude, it.longitude) }!!
-        val cameraPos = rememberCameraPositionState{
+
+    if (!state.isLoading) {
+        val pos = state.city?.let { LatLng(it.latitude, it.longitude) }!!
+        val cameraPos = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(pos, 10f)
         }
-        var sights: List<SightUi> = state.city!!.sights
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                //.padding(paddingValues)
-        ) {
-            // Add GoogleMap here
-            GoogleMap(
-                modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPos,
-                onMapLoaded = { isMapLoaded = true }
-            ) {
-                MapMarkerContent(sights)
-            }
+        val sights: List<SightUi> = state.city!!.sights
 
-            if (!isMapLoaded || state.isLoading) {
-                AnimatedVisibility(
-                    modifier = Modifier.matchParentSize(),
-                    visible = !isMapLoaded,
-                    enter = EnterTransition.None,
-                    exit = fadeOut()
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                CitySeeAppBar(
+                    title = stringResource(id = R.string.app_bar_title_map),
+                    actions = {
+                        IconButton(onClick = {
+                            onProfileClick()
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Person, // Replace with a profile-related icon if available
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    }
+                )
+            },
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                GoogleMap(
+                    modifier = Modifier.fillMaxSize(),
+                    cameraPositionState = cameraPos,
+                    onMapLoaded = { isMapLoaded = true }
                 ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background)
-                            .wrapContentSize()
-                    )
+                    sights.forEach { sight ->
+                        Marker(
+                            state = MarkerState(position = LatLng(sight.latitude, sight.longitude)),
+                            title = sight.name,
+                            onClick = {
+                                onMarkerClick(sight.id)
+                                true
+                            }
+                        )
+                    }
+                }
+
+                if (!isMapLoaded || state.isLoading) {
+                    AnimatedVisibility(
+                        modifier = Modifier.matchParentSize(),
+                        visible = !isMapLoaded,
+                        enter = EnterTransition.None,
+                        exit = fadeOut()
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.background)
+                                .wrapContentSize()
+                        )
+                    }
                 }
             }
         }
