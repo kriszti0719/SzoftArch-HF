@@ -30,8 +30,10 @@ import coil.compose.rememberAsyncImagePainter
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImagePainter
 import com.google.firebase.storage.FirebaseStorage
+import hu.bme.aut.citysee.R
 import hu.bme.aut.citysee.domain.model.User
 
 
@@ -179,8 +181,19 @@ fun ProfileScreen(
                         Text("Save changes")
                     }
 
+                    //Points and badges
                     Text("Points:${state.points}")
 
+                    Text("Badges earned:")
+
+                    Row {
+                        for(i in 0..<(state.points!!/100))
+                        Image(
+                            painterResource(R.drawable.trophy),
+                            "default badge",
+                            modifier = Modifier.size(64.dp)
+                        )
+                    }
                     // logout button at the bottom of the page
                     Spacer(modifier = Modifier.weight(1f))
                     Button(
@@ -191,6 +204,7 @@ fun ProfileScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
                         Text("Logout")
+
                     }
                 }
             }

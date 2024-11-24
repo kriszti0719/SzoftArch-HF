@@ -12,4 +12,5 @@ data class Sight (
     val description: String = "",
     val bonusInfo: String = "",
     val photos: List<String> = emptyList(),
+    var visited: Boolean = false,
 )
