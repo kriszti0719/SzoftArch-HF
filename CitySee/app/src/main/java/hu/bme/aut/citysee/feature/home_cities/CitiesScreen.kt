@@ -90,11 +90,6 @@ fun CitiesScreen(
                 CircularProgressIndicator(
                     color = MaterialTheme.colorScheme.secondaryContainer
                 )
-            } else if (state.isError) {
-                Text(
-                    text = state.error?.toUiText()?.asString(context)
-                        ?: stringResource(id = StringResources.some_error_message)
-                )
             } else {
                 if (state.cities.isEmpty()) {
                     Text(text = stringResource(id = StringResources.text_empty_sight_list))

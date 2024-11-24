@@ -94,6 +94,7 @@ fun NavGraph(
                         route = Screen.Login.route,
                         inclusive = false
                     )
+                    navController.navigate(Screen.Login.route)
                 }
             )
         }
