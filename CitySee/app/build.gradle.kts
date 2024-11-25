@@ -1,3 +1,7 @@
+import com.android.tools.build.jetifier.core.utils.Log
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,6 +11,12 @@ plugins {
 }
 
 android {
+
+    val localProperties = Properties()
+    localProperties.load(FileInputStream(rootProject.file("local.properties")))
+
+    android.buildFeatures.buildConfig = true
+
     namespace = "hu.bme.aut.citysee"
     compileSdk = 34
 
@@ -18,10 +28,15 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "MAPS_API_KEY",  "\"${localProperties["MAPS_API_KEY"]}\"")
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "MAPS_API_KEY",  "\"${localProperties["MAPS_API_KEY"]}\"")
+        }
         release {
+            buildConfigField("String", "MAPS_API_KEY",  "\"${localProperties["MAPS_API_KEY"]}\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -38,6 +53,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -68,19 +84,25 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.4.0")  // For the activity result APIs
     implementation("io.coil-kt:coil-compose:2.1.0")         // For loading images
 
-    // Google Maps SDK -- these are here for the data model.  Remove these dependencies and replace
-    // with the compose versions.
-    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+
+    implementation(libs.play.services.maps)
     // KTX for the Maps SDK for Android library
-    implementation("com.google.maps.android:maps-ktx:5.0.0")
+    implementation(libs.maps.ktx)
     // KTX for the Maps SDK for Android Utility Library
-    implementation("com.google.maps.android:maps-utils-ktx:5.0.0")
+    implementation(libs.maps.utils.ktx)
 
     // Google Maps Compose library
     val mapsComposeVersion = "4.4.1"
-    implementation("com.google.maps.android:maps-compose:$mapsComposeVersion")
+    implementation(libs.maps.compose)
     // Google Maps Compose utility library
-    implementation("com.google.maps.android:maps-compose-utils:$mapsComposeVersion")
+    implementation(libs.maps.compose.utils)
     // Google Maps Compose widgets library
-    implementation("com.google.maps.android:maps-compose-widgets:$mapsComposeVersion")
+    implementation(libs.maps.compose.widgets)
+
+    // OkHttp for network requests
+    implementation (libs.okhttp)
+    implementation (libs.logging.interceptor)
+
+    implementation (libs.gson)
 }

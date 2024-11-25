@@ -12,8 +12,9 @@ import hu.bme.aut.citysee.ui.model.SightUi
 @GoogleMapComposable
 fun MapMarkerContent(
     sights: List<SightUi>,
-    onLocationClick: (Marker) -> Boolean = { false }
-) {
+    onLocationClick: (Marker) -> Boolean = { false },
+    onMarkerClick: (String) -> Unit,
+    ) {
     sights.forEach { sight ->
 
         Marker(
@@ -25,6 +26,9 @@ fun MapMarkerContent(
                 onLocationClick(marker)
                 false
             },
+            onInfoWindowClick = { marker ->
+                onMarkerClick(sight.id)
+            }
         )
     }
 }
