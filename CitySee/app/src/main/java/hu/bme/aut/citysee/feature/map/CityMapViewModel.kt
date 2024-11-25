@@ -64,7 +64,29 @@ class CityMapViewModel constructor(
             _uiEvent.send(UiEvent.Failure(e.toUiText()))
         }
     }
-    private suspend fun loadSights() {
+    suspend fun loadSights() {
+        _state.update { it.copy(isLoading = true) }
+        try {
+            val citySights = mutableListOf<SightUi>()
+            // Fetch all sights from the global collection
+            val allSights = sightService.getAllSights() // Implement this in your service
+
+            allSights
+                .forEach { sight ->
+                    val sightUi = sight.asSightUi()
+                    citySights.add(sightUi) // Add each matched SightUi to citySights
+                }
+
+            // Update the current city with the fetched sights
+            currentCity.sights = citySights
+            Log.e("Sights", currentCity.sights.toString())
+
+            _state.update { it.copy(isLoading = false, city = currentCity) }
+        } catch (e: Exception) {
+            _uiEvent.send(UiEvent.Failure(e.toUiText()))
+        }
+    }
+/*    private suspend fun loadSights() {
         _state.update { it.copy(isLoading = true) }
         try {
             val citySights = mutableListOf<SightUi>()
@@ -78,7 +100,7 @@ class CityMapViewModel constructor(
         } catch (e: Exception) {
             _uiEvent.send(UiEvent.Failure(e.toUiText()))
         }
-    }
+    }*/
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

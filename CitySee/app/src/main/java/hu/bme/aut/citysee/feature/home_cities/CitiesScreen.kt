@@ -1,4 +1,4 @@
-package hu.bme.aut.citysee.feature.home_list
+package hu.bme.aut.citysee.feature.home_cities
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,12 +46,10 @@ import hu.bme.aut.citysee.R.string as StringResources
 
 @ExperimentalMaterial3Api
 @Composable
-fun SightsScreen(
-    onListItemClick: (String) -> Unit,
-    onFabClick: () -> Unit,
-    onSignOut: () -> Unit,
+fun CitiesScreen(
+    onCityClick: (String) -> Unit,
     onProfileClick: () -> Unit,
-    viewModel: SightsViewModel = viewModel(factory = SightsViewModel.Factory)
+    viewModel: CitiesViewModel = viewModel(factory = CitiesViewModel.Factory)
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -60,7 +58,7 @@ fun SightsScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             CitySeeAppBar(
-                title = stringResource(id = StringResources.app_bar_title_sights),
+                title = stringResource(id = StringResources.app_bar_title_cities),
                 actions = {
                     IconButton(onClick = {
                         onProfileClick()
@@ -73,22 +71,6 @@ fun SightsScreen(
                     }
                 }
             )
-        },
-        floatingActionButton = {
-            Box(
-                modifier = Modifier.fillMaxSize() // Ensure the Box takes the full screen
-            ) {
-                LargeFloatingActionButton(
-                    onClick = onFabClick,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier
-                        .padding(16.dp) // Padding from edges
-                        .align(Alignment.BottomStart) // Align to bottom-left corner
-                ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
-                }
-            }
         },
     ) { padding ->
         Box(
@@ -108,13 +90,8 @@ fun SightsScreen(
                 CircularProgressIndicator(
                     color = MaterialTheme.colorScheme.secondaryContainer
                 )
-            } else if (state.isError) {
-                Text(
-                    text = state.error?.toUiText()?.asString(context)
-                        ?: stringResource(id = StringResources.default_error_message)
-                )
             } else {
-                if (state.sights.isEmpty()) {
+                if (state.cities.isEmpty()) {
                     Text(text = stringResource(id = StringResources.text_empty_sight_list))
                 } else {
                     LazyColumn(
@@ -122,35 +99,20 @@ fun SightsScreen(
                             .fillMaxSize()
                             .clip(RoundedCornerShape(5.dp))
                     ) {
-                        items(state.sights.size) { i ->
+                        items(state.cities.size) { i ->
                             ListItem(
                                 headlineContent = {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(
-                                            imageVector = Icons.Default.Circle,
-                                            contentDescription = null,
-                                            tint = state.sights[i].type.color,
-                                            modifier = Modifier
-                                                .size(40.dp)
-                                                .padding(
-                                                    end = 8.dp,
-                                                    top = 8.dp,
-                                                    bottom = 8.dp
-                                                ),
-                                        )
-                                        Text(text = state.sights[i].name)
+                                        Text(text = state.cities[i].name)
                                     }
                                 },
-                                supportingContent = {
-                                    Text( text = state.sights[i].address )
-                                },
                                 modifier = Modifier.clickable(onClick = {
-                                    onListItemClick(
-                                        state.sights[i].id
+                                    onCityClick(
+                                        state.cities[i].id
                                     )
                                 })
                             )
-                            if (i != state.sights.lastIndex) {
+                            if (i != state.cities.lastIndex) {
                                 HorizontalDivider(
                                     thickness = 2.dp,
                                     color = MaterialTheme.colorScheme.secondaryContainer

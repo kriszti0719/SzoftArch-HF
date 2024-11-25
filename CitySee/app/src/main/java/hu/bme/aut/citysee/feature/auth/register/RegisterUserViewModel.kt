@@ -68,18 +68,26 @@ class RegisterUserViewModel constructor(
     private fun onSignUp() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                if (!isEmailValid(email)) {
-                    _uiEvent.send(
-                        UiEvent.Failure(UiText.StringResource(StringResources.some_error_message))
-                    )
-                } else {
-                    if (!passwordsMatch(password,confirmPassword) && password.isNotBlank()) {
+                when (isEmailValid.validate(email)) {
+                    IsEmailValidUseCase.ValidationResult.EmptyEmail -> {
                         _uiEvent.send(
-                            UiEvent.Failure(UiText.StringResource(StringResources.some_error_message))
+                            UiEvent.Failure(UiText.StringResource(StringResources.error_empty_email))
                         )
-                    } else {
-                        authService.signUp(email, password)
-                        _uiEvent.send(UiEvent.Success)
+                    }
+                    IsEmailValidUseCase.ValidationResult.InvalidEmail -> {
+                        _uiEvent.send(
+                            UiEvent.Failure(UiText.StringResource(StringResources.error_invalid_email))
+                        )
+                    }
+                    IsEmailValidUseCase.ValidationResult.Valid -> {
+                        if (password.isBlank()) {
+                            _uiEvent.send(
+                                UiEvent.Failure(UiText.StringResource(StringResources.error_empty_password))
+                            )
+                        } else {
+                            authService.authenticate(email, password)
+                            _uiEvent.send(UiEvent.Success)
+                        }
                     }
                 }
             } catch (e: Exception) {

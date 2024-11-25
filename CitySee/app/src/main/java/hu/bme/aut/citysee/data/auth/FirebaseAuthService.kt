@@ -66,7 +66,7 @@ class FirebaseAuthService(private val firebaseAuth: FirebaseAuth) : AuthService 
                     .toString()
             )
         } else {
-            throw Exception("User not authenticated")
+            return User()
         }
     }
 
@@ -220,6 +220,7 @@ class FirebaseAuthService(private val firebaseAuth: FirebaseAuth) : AuthService 
     }
 
     override suspend fun signOut() {
+        Log.e("FirebaseAuthService", "Signing out...")
         firebaseAuth.signOut()
     }
 }

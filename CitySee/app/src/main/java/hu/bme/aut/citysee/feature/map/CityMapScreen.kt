@@ -12,13 +12,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.location.LocationServices
@@ -43,6 +46,7 @@ import kotlinx.coroutines.launch
 fun CityMapScreen(
     onMarkerClick: (String) -> Unit,
     onProfileClick: () -> Unit,
+    onFabClick: () -> Unit,
     viewModel: CityMapViewModel = viewModel(factory = CityMapViewModel.Factory)
 ) {
     val context = LocalContext.current
@@ -53,6 +57,12 @@ fun CityMapScreen(
     var polylinePoints by remember { mutableStateOf<List<LatLng>>(emptyList()) }
     var isDataLoaded by remember { mutableStateOf(false) }
     var isLocationLoaded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = state.city) {
+        state.city?.let {
+            viewModel.loadSights() // Reload sights when the city changes
+        }
+    }
 
     if (!state.isLoading) {
         val pos = state.city?.let { LatLng(it.latitude, it.longitude) }!!
@@ -78,6 +88,22 @@ fun CityMapScreen(
                         }
                     }
                 )
+            },
+            floatingActionButton = {
+                Box(
+                    modifier = Modifier.fillMaxSize() // Ensure the Box takes the full screen
+                ) {
+                    LargeFloatingActionButton(
+                        onClick = onFabClick,
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier
+                            .padding(16.dp) // Padding from edges
+                            .align(Alignment.BottomStart) // Align to bottom-left corner
+                    ) {
+                        Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                    }
+                }
             },
         ) { innerPadding ->
             Box(

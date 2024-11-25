@@ -1,9 +1,11 @@
 package hu.bme.aut.citysee.ui.common
 
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -21,7 +24,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,13 +34,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.AutocompletePrediction
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.android.libraries.places.api.net.PlacesClient
 import hu.bme.aut.citysee.R
 import hu.bme.aut.citysee.domain.model.Type
 import hu.bme.aut.citysee.ui.model.TypeUi
@@ -59,11 +74,39 @@ fun SightEditor(
     onTypeSelected: (TypeUi) -> Unit,
     photos: List<String> = emptyList(),
     imagePickerLauncher: (String) ->Unit,
+    onCoordinatesFetched: (Double, Double) -> Unit,
     enabled: Boolean = true,
 ) {
     val fraction = 0.95f
-
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    // Places stuff
+    var suggestions by remember { mutableStateOf<List<AutocompletePrediction>>(emptyList()) }
+    val placesClient: PlacesClient = Places.createClient(LocalContext.current)
+    var isAddressFocused by remember { mutableStateOf(false) }
+
+    // long and lat storing
+    var coordinates by remember { mutableStateOf<Pair<Double, Double>?>(null) }
+
+    // Trigger autocomplete when address value changes, but only if the field is focused
+    LaunchedEffect(addressValue) {
+        if (isAddressFocused && addressValue.isNotEmpty()) {
+            val request = FindAutocompletePredictionsRequest.builder()
+                .setQuery(addressValue)
+                .build()
+
+            placesClient.findAutocompletePredictions(request)
+                .addOnSuccessListener { response ->
+                    suggestions = response.autocompletePredictions
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("Autocomplete", "Place search failed", exception)
+                }
+        } else {
+            suggestions = emptyList()
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -92,9 +135,50 @@ fun SightEditor(
             imeAction = ImeAction.Next,
             modifier = Modifier
                 .fillMaxWidth(fraction)
-                .padding(top = 5.dp),
+                .padding(top = 5.dp)
+                .focusRequester(FocusRequester())
+                .onFocusChanged {
+                    isAddressFocused = it.isFocused // Update focus state when the field is focused
+                },
             enabled = enabled
         )
+
+        // Show autocomplete suggestions only if the address field is focused
+        if (isAddressFocused && suggestions.isNotEmpty()) {
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                items(suggestions) { prediction ->
+                    Text(
+                        text = prediction.getFullText(null).toString(),
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
+                            .clickable {
+                                addressOnValueChange(prediction.getFullText(null).toString())
+                                suggestions = emptyList() // Hide suggestions after selection
+
+                                // Fetch the coordinates for the selected place
+                                val placeId = prediction.placeId
+                                val placeFields = listOf(Place.Field.LAT_LNG)
+                                val request = FetchPlaceRequest.builder(placeId, placeFields).build()
+
+                                placesClient.fetchPlace(request)
+                                    .addOnSuccessListener { response ->
+                                        val latLng = response.place.latLng
+                                        if (latLng != null) {
+                                            onCoordinatesFetched(latLng.latitude, latLng.longitude)
+                                        }
+                                    }
+                                    .addOnFailureListener { exception ->
+                                        Log.e("FetchPlace", "Failed to fetch place details", exception)
+                                    }
+                            }
+                    )
+                }
+            }
+        }
+        coordinates?.let { (lat, lng) ->
+            Text(text = "Coordinates: $lat, $lng", modifier = Modifier.padding(16.dp))
+        }
         Spacer(modifier = Modifier.height(5.dp))
         TypeDropDown(
             types = types,
@@ -167,7 +251,7 @@ fun SightEditor(
     }
 }
 
-@ExperimentalComposeUiApi
+/*@ExperimentalComposeUiApi
 @ExperimentalMaterial3Api
 @Composable
 //@Preview(showBackground = true)
@@ -221,4 +305,4 @@ fun SightEditor_Preview() {
             imagePickerLauncher = imagePickerLauncher::launch
         )
     }
-}
+}*/

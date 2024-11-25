@@ -19,7 +19,7 @@ sealed class UiText {
 fun Throwable.toUiText(): UiText {
     val message = this.message.orEmpty()
     return if (message.isBlank()) {
-        UiText.StringResource(StringResources.some_error_message)
+        UiText.StringResource(StringResources.default_error_message)
     } else {
         UiText.DynamicString(message)
     }

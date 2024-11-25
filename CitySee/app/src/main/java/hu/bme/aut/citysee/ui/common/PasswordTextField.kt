@@ -5,6 +5,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.rounded.Visibility
@@ -84,7 +85,12 @@ fun PasswordTextField(
             focusedTextColor = MaterialTheme.colorScheme.tertiary,
             unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
             focusedLabelColor = MaterialTheme.colorScheme.tertiary,
-            unfocusedLabelColor = MaterialTheme.colorScheme.tertiary
+            unfocusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                    cursorColor = MaterialTheme.colorScheme.tertiary,
+            selectionColors = TextSelectionColors(
+                handleColor = MaterialTheme.colorScheme.tertiary,
+                backgroundColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.3f)
+            ),
         ),
         shape = shape
     )

@@ -57,6 +57,11 @@ android {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        force("androidx.appcompat:appcompat:1.4.1") // Use the desired version
+    }
+}
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -105,4 +110,8 @@ dependencies {
     implementation (libs.logging.interceptor)
 
     implementation (libs.gson)
+    implementation("com.google.maps.android:maps-compose-widgets:$mapsComposeVersion")
+
+    // Google Maps Places API for address autocompletion
+    implementation("com.google.android.libraries.places:places:3.3.0")
 }
