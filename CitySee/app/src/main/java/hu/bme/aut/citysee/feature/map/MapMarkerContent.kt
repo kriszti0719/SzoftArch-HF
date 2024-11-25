@@ -1,6 +1,7 @@
 package hu.bme.aut.citysee.feature.map
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.maps.android.compose.Marker
@@ -14,7 +15,9 @@ fun MapMarkerContent(
     sights: List<SightUi>,
     onLocationClick: (Marker) -> Boolean = { false },
     onMarkerClick: (String) -> Unit,
-    ) {
+    isMarkerClicked: MutableState<Boolean>,
+    markerClicked: MutableState<LatLng?>
+) {
     sights.forEach { sight ->
 
         Marker(
@@ -24,6 +27,8 @@ fun MapMarkerContent(
             tag = sight,
             onClick = { marker ->
                 onLocationClick(marker)
+                isMarkerClicked.value = true
+                markerClicked.value = marker.position
                 false
             },
             onInfoWindowClick = { marker ->

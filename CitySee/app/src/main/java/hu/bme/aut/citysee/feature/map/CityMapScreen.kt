@@ -9,10 +9,12 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowOutward
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,9 +26,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
@@ -34,6 +39,7 @@ import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import getDirections
+import getDirectionsAndUpdateState
 import hu.bme.aut.citysee.R
 import hu.bme.aut.citysee.ui.common.CitySeeAppBar
 import hu.bme.aut.citysee.ui.model.SightUi
@@ -49,14 +55,19 @@ fun CityMapScreen(
     onFabClick: () -> Unit,
     viewModel: CityMapViewModel = viewModel(factory = CityMapViewModel.Factory)
 ) {
+    val isMarkerClicked = remember { mutableStateOf(false) }
+    val markerClicked = remember { mutableStateOf<LatLng?>(null) }
     val context = LocalContext.current
-    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
-    val location = remember { mutableStateOf<Location?>(null) }
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+    val userLocation = remember { mutableStateOf<Location?>(null) }
     val state by viewModel.state.collectAsStateWithLifecycle()
     var isMapLoaded by remember { mutableStateOf(!state.isLoading) }
-    var polylinePoints by remember { mutableStateOf<List<LatLng>>(emptyList()) }
-    var isDataLoaded by remember { mutableStateOf(false) }
-    var isLocationLoaded by remember { mutableStateOf(false) }
+    val polylinePoints : MutableState<List<LatLng>> = remember { mutableStateOf(emptyList()) }
+    val isDataLoaded : MutableState<Boolean> = remember { mutableStateOf(false) }
+    val apiKey = BuildConfig.MAPS_API_KEY
+    var origin: LatLng? = null
+    var destination: LatLng? = null
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = state.city) {
         state.city?.let {
@@ -93,7 +104,7 @@ fun CityMapScreen(
                 Box(
                     modifier = Modifier.fillMaxSize() // Ensure the Box takes the full screen
                 ) {
-                    LargeFloatingActionButton(
+                    FloatingActionButton(
                         onClick = onFabClick,
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -102,6 +113,32 @@ fun CityMapScreen(
                             .align(Alignment.BottomStart) // Align to bottom-left corner
                     ) {
                         Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                    }
+                    if(isMarkerClicked.value){
+                        FloatingActionButton(
+                            onClick = {
+                                origin = userLocation.value?.let { LatLng(it.latitude, it.longitude) }
+                                destination =  markerClicked.value
+                                // Call the function that handles directions and state updates
+                                getDirectionsAndUpdateState(
+                                    origin,
+                                    destination,
+                                    apiKey,
+                                    coroutineScope,
+                                    polylinePoints,
+                                    isDataLoaded
+                                )
+
+                            },
+                            contentColor = MaterialTheme.colorScheme.primary,
+                            containerColor = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .align(Alignment.BottomStart)
+                                .offset(y = -60.dp)
+                        ) {
+                            Icon(imageVector = Icons.Default.ArrowOutward, contentDescription = null)
+                        }
                     }
                 }
             },
@@ -112,10 +149,16 @@ fun CityMapScreen(
                     .padding(innerPadding)
             ) {
                 LaunchedEffect(Unit) {
-                    fusedLocationClient.lastLocation.addOnSuccessListener { locationResult ->
-                        location.value = locationResult
-                        Log.e("We totally get here", location.value.toString())
-                        isLocationLoaded = true
+                    try {
+                        fusedLocationClient.getCurrentLocation(
+                            LocationRequest.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token
+                        ).addOnSuccessListener { loc ->
+                            userLocation.value = loc
+                        }.addOnFailureListener { e ->
+                            Log.e("LocationError", "Failed to get current location", e)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("LocationError", "Error getting location", e)
                     }
                 }
                 GoogleMap(
@@ -123,39 +166,38 @@ fun CityMapScreen(
                     cameraPositionState = cameraPos,
                     onMapLoaded = { isMapLoaded = true },
                     uiSettings = MapUiSettings(
-                        zoomControlsEnabled = true,  // Enable zoom controls
-                        compassEnabled = true,      // Enable compass
-                        myLocationButtonEnabled = true  // Enable the "My Location" button
-                    )
+                        zoomControlsEnabled = true,
+                        compassEnabled = true,
+                        myLocationButtonEnabled = true,
+                    ),
+                    onMapClick = { latLng ->
+                        if (isMarkerClicked.value) {
+                            isMarkerClicked.value = false
+                        }
+                        if(isDataLoaded.value){
+                            isDataLoaded.value = false
+                        }
+                        origin = null
+                        destination = null
+                        polylinePoints.value = emptyList()
+                    }
                 )
                  {
-                    MapMarkerContent(sights = sights, onMarkerClick = onMarkerClick)
-                     if (location.value != null) {
-                         // Add a marker for the user's location (optional)
+                    MapMarkerContent(sights = sights, isMarkerClicked = isMarkerClicked, markerClicked = markerClicked, onMarkerClick = onMarkerClick)
+                     if (userLocation.value != null) {
                          Marker(
-                             state = rememberMarkerState(position = LatLng(location.value!!.latitude, location.value!!.longitude)),
-                             title = "Your Location"
+                             state = rememberMarkerState(position = LatLng(userLocation.value!!.latitude, userLocation.value!!.longitude)),
+                             title = "Your Location",
+                             icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
                          )
                      }
 
-                    val coroutineScope = rememberCoroutineScope()
-                    val apiKey = BuildConfig.MAPS_API_KEY
-                    val origin = LatLng(sights[2].latitude, sights[2].longitude)
-                    val destination =  LatLng(sights[1].latitude, sights[1].longitude)
-                    LaunchedEffect(Unit) {
-                        coroutineScope.launch {
-                            polylinePoints = getDirections(origin, destination, apiKey)
-                            isDataLoaded = true
-                        }
-                    }
-                    if(isDataLoaded){
-                        Polyline(
-                            points = polylinePoints,    // List of LatLng points
-                            color = Color.Blue,         // Polyline color
-                            width = 8f,                 // Polyline width
-                            geodesic = true             // Optional: curve the polyline to follow Earth's curvature
-                        )
-                    }
+                     Polyline(
+                         points = polylinePoints.value,    // List of LatLng points
+                         color = Color.Blue,         // Polyline color
+                         width = 8f,                 // Polyline width
+                         geodesic = true             // Optional: curve the polyline to follow Earth's curvature
+                     )
                 }
                 if (!isMapLoaded || state.isLoading) {
                     AnimatedVisibility(
@@ -175,3 +217,4 @@ fun CityMapScreen(
         }
     }
 }
+

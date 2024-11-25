@@ -1,4 +1,8 @@
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.rememberCoroutineScope
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -7,6 +11,8 @@ import java.io.IOException
 import java.net.URLEncoder
 import com.google.gson.Gson
 import hu.bme.aut.citysee.ui.model.DirectionsResponse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 suspend fun getDirections(
     origin: LatLng,
@@ -109,4 +115,23 @@ fun decodePolyline(encoded: String): List<LatLng> {
     }
 
     return polyline
+}
+
+fun getDirectionsAndUpdateState(
+    origin: LatLng?,
+    destination: LatLng?,
+    apiKey: String,
+    coroutineScope: CoroutineScope,
+    polylinePoints: MutableState<List<LatLng>>,
+    isDataLoaded: MutableState<Boolean>
+) {
+    coroutineScope.launch {
+        // Fetch the directions using the getDirections method
+        if(origin != null && destination!=null){
+            val directions = getDirections(origin, destination, apiKey)
+            // Update the polyline points and the data loaded flag
+            polylinePoints.value = directions
+            isDataLoaded.value = true
+        }
+    }
 }

@@ -86,21 +86,6 @@ class CityMapViewModel constructor(
             _uiEvent.send(UiEvent.Failure(e.toUiText()))
         }
     }
-/*    private suspend fun loadSights() {
-        _state.update { it.copy(isLoading = true) }
-        try {
-            val citySights = mutableListOf<SightUi>()
-            Log.e("Sights", sightIds.toString())
-            for(id in sightIds){
-                sightService.getSight(id)?.let { citySights.add(it.asSightUi()) }
-            }
-            currentCity.sights = citySights
-            Log.e("Sights", currentCity.sights.toString())
-            _state.update {it.copy(isLoading = false, city = currentCity) }
-        } catch (e: Exception) {
-            _uiEvent.send(UiEvent.Failure(e.toUiText()))
-        }
-    }*/
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

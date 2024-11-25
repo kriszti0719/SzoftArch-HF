@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import hu.bme.aut.citysee.feature.auth.login.LoginScreen
 import hu.bme.aut.citysee.feature.auth.register.RegisterScreen
 import hu.bme.aut.citysee.feature.home.HomeScreen
+import hu.bme.aut.citysee.feature.home_cities.CitiesScreen
 import hu.bme.aut.citysee.feature.home_list.SightsScreen
 import hu.bme.aut.citysee.feature.map.CityMapScreen
 import hu.bme.aut.citysee.feature.profile.ProfileScreen
@@ -26,8 +27,8 @@ fun NavGraph(
 ) {
     NavHost(
         navController = navController,
-        //startDestination = Screen.Login.route
-        startDestination = Screen.CityMap.passId("a8ILKBpSELkxln9MZUmy")
+        startDestination = Screen.Login.route
+        //startDestination = Screen.CityMap.passId("a8ILKBpSELkxln9MZUmy")
     ) {
         composable(Screen.Login.route) {
             LoginScreen(
@@ -138,21 +139,21 @@ fun NavGraph(
                 },
                 onProfileClick = {
                     navController.navigate(Screen.Profile.route)
-                }
-                , onFabClick = {
+                },
+                onFabClick = {
                     navController.navigate(Screen.SightCreate.route)
                 }
             )
         }
-        //composable(route = Screen.Cities.route) {
-        //    CitiesScreen(
-        //        onCityClick = {
-        //            navController.navigate(Screen.CityMap.passId(it))
-        //        },
-        //        onProfileClick = {
-        //            navController.navigate(Screen.Profile.route)
-        //        }
-        //    )
-        //}
+        composable(route = Screen.Cities.route) {
+            CitiesScreen(
+                onCityClick = {
+                    navController.navigate(Screen.CityMap.passId(it))
+                },
+                onProfileClick = {
+                    navController.navigate(Screen.Profile.route)
+                }
+            )
+        }
     }
 }
