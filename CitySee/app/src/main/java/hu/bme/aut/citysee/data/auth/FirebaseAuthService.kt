@@ -67,6 +67,7 @@ class FirebaseAuthService(private val firebaseAuth: FirebaseAuth) : AuthService 
                     .toString(),
                 points = FirebaseStorage.getInstance().reference.child("points/${user.email.hashCode()}")
                     .toString().toInt()
+                // hogy kell int-et normálisan eltárolni firebase-ben
             )
         } else {
             return User()
