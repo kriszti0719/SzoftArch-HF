@@ -38,4 +38,5 @@ interface AuthService {
     suspend fun updateProfileImage(uri: Uri?, onComplete: (Boolean) -> Unit)
 
     suspend fun signOut()
+    suspend fun updatePoints(points: Int)
 }

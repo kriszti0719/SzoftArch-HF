@@ -20,20 +20,21 @@ class FirebaseAuthService(private val firebaseAuth: FirebaseAuth) : AuthService 
     }
     override val currentUserId: String? get() = firebaseAuth.currentUser?.uid
     override val hasUser: Boolean get() = firebaseAuth.currentUser != null
-    override val currentUser: Flow<User?> get() = callbackFlow {
-        this.trySend(currentUserId?.let { User(it) })
-        val listener =
-            FirebaseAuth.AuthStateListener { auth ->
-                this.trySend(auth.currentUser?.let { User(it.uid) })
-            }
-        firebaseAuth.addAuthStateListener(listener)
-        awaitClose { firebaseAuth.removeAuthStateListener(listener) }
-    }
+    override val currentUser: Flow<User?>
+        get() = callbackFlow {
+            this.trySend(currentUserId?.let { User(it) })
+            val listener =
+                FirebaseAuth.AuthStateListener { auth ->
+                    this.trySend(auth.currentUser?.let { User(it.uid) })
+                }
+            firebaseAuth.addAuthStateListener(listener)
+            awaitClose { firebaseAuth.removeAuthStateListener(listener) }
+        }
 
 
     override suspend fun signUp(email: String, password: String) {
-        firebaseAuth.createUserWithEmailAndPassword(email,password)
-            .addOnSuccessListener {  result ->
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener { result ->
                 val user = result.user
                 val profileChangeRequest = UserProfileChangeRequest.Builder()
                     .setDisplayName(user?.email?.substringBefore('@'))
@@ -63,10 +64,22 @@ class FirebaseAuthService(private val firebaseAuth: FirebaseAuth) : AuthService 
                 id = user.uid,
                 email = user.email ?: "",
                 profileImageUrl = FirebaseStorage.getInstance().reference.child("profile_pics/${user.email.hashCode()}.jpg")
-                    .toString()
+                    .toString(),
+                points = FirebaseStorage.getInstance().reference.child("points/${user.email.hashCode()}")
+                    .toString().toInt()
             )
         } else {
             return User()
+        }
+    }
+
+    override suspend fun updatePoints(points: Int) {
+        val user = firebaseAuth.currentUser
+        user?.let {
+            var storageReference =
+                FirebaseStorage.getInstance().reference.child("points/${user.email.hashCode()}")
+            val uploadTask = storageReference.putBytes(points.toString().toByteArray())
+            uploadTask.await()
         }
     }
 
@@ -100,7 +113,8 @@ class FirebaseAuthService(private val firebaseAuth: FirebaseAuth) : AuthService 
         // Check if email and uri are valid
         if (email != null && uri != null) {
             // Declare variables outside the try blocks
-            val storageReference = FirebaseStorage.getInstance().reference.child("profile_pics/${email.hashCode()}.jpg")
+            val storageReference =
+                FirebaseStorage.getInstance().reference.child("profile_pics/${email.hashCode()}.jpg")
             val user = FirebaseAuth.getInstance().currentUser
             val profileChangeRequest: UserProfileChangeRequest
             var downloadUrl: Uri? = null
@@ -137,7 +151,8 @@ class FirebaseAuthService(private val firebaseAuth: FirebaseAuth) : AuthService 
 
                 // Step 5: Update the user's profile
                 try {
-                    user.updateProfile(profileChangeRequest)?.await() // Use await() to suspend until profile is updated
+                    user.updateProfile(profileChangeRequest)
+                        ?.await() // Use await() to suspend until profile is updated
                     // Successfully updated the profile
                     onComplete(true)
                 } catch (e: Exception) {
@@ -158,7 +173,8 @@ class FirebaseAuthService(private val firebaseAuth: FirebaseAuth) : AuthService 
     // Upload profile image to Firebase Storage and store its URL in Firestore
     override suspend fun uploadProfileImageToFirebase(uri: Uri, onComplete: (String?) -> Unit) {
         val email = FirebaseAuth.getInstance().currentUser?.email
-        val storageReference = FirebaseStorage.getInstance().reference.child("profile_pics/${email.hashCode()}.jpg")
+        val storageReference =
+            FirebaseStorage.getInstance().reference.child("profile_pics/${email.hashCode()}.jpg")
         val uploadTask = storageReference.putFile(uri)
 
         // Await the upload to complete and get the download URL

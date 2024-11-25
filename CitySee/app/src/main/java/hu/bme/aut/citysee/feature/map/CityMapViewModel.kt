@@ -12,6 +12,7 @@ import hu.bme.aut.citysee.CitySeeApplication
 import hu.bme.aut.citysee.data.city.CityService
 import hu.bme.aut.citysee.data.sights.SightService
 import hu.bme.aut.citysee.domain.model.Sight
+import hu.bme.aut.citysee.domain.model.User
 import hu.bme.aut.citysee.ui.model.CityUi
 import hu.bme.aut.citysee.ui.model.SightUi
 import hu.bme.aut.citysee.ui.model.asCityUi
@@ -24,6 +25,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -84,6 +86,15 @@ class CityMapViewModel constructor(
             _state.update { it.copy(isLoading = false, city = currentCity) }
         } catch (e: Exception) {
             _uiEvent.send(UiEvent.Failure(e.toUiText()))
+        }
+    }
+
+    public fun addPoints(points : Int){
+        viewModelScope.launch {
+            val authService = CitySeeApplication.authService
+            val user = authService.currentUser.single()
+            if(user != null)
+            authService.updatePoints(user.points + points)
         }
     }
 

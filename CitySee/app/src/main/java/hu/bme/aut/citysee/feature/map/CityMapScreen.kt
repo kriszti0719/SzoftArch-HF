@@ -43,6 +43,7 @@ import hu.bme.aut.citysee.R
 import hu.bme.aut.citysee.ui.common.CitySeeAppBar
 import hu.bme.aut.citysee.ui.model.SightUi
 import hu.bme.aut.citysee.BuildConfig
+import hu.bme.aut.citysee.CitySeeApplication
 import kotlin.math.*
 
 @SuppressLint("MissingPermission")
@@ -205,9 +206,10 @@ fun CityMapScreen(
                              icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
                          )
 
-                         if (isWithinOneKilometer(destination!!, userLocation.value!!)) {
+                         if (destination != null && isWithinOneKilometer(destination!!, userLocation.value!!)) {
                              //add 100 to the user's score
 
+                            viewModel.addPoints(100)
                          }
                      }
 

@@ -3,20 +3,16 @@ package hu.bme.aut.citysee
 import androidx.activity.compose.setContent
 import hu.bme.aut.citysee.navigation.NavGraph
 import hu.bme.aut.citysee.ui.theme.CitySeeTheme
-
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.ActivityResultLauncher
-
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.AlertDialog
-
 import androidx.compose.runtime.Composable
-
 
 class MainActivity : ComponentActivity() {
 

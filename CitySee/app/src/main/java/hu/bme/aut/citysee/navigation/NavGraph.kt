@@ -29,6 +29,7 @@ fun NavGraph(
         navController = navController,
         startDestination = Screen.Login.route
         //startDestination = Screen.CityMap.passId("a8ILKBpSELkxln9MZUmy")
+
     ) {
         composable(Screen.Login.route) {
             LoginScreen(
