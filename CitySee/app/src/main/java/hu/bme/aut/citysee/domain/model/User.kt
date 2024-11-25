@@ -7,6 +7,6 @@ data class User(
     val profileImageUrl: String? = null,
     val visitedSights: List<String> = emptyList(),
     var level: Int = 1,
-    var points: Int = 0,
+    var points: Int = 100,
     private val badges: List<Badge> = emptyList()
 )

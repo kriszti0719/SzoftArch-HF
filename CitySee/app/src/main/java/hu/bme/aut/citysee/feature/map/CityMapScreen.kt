@@ -38,13 +38,12 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
-import getDirections
 import getDirectionsAndUpdateState
 import hu.bme.aut.citysee.R
 import hu.bme.aut.citysee.ui.common.CitySeeAppBar
 import hu.bme.aut.citysee.ui.model.SightUi
 import hu.bme.aut.citysee.BuildConfig
-import kotlinx.coroutines.launch
+import kotlin.math.*
 
 @SuppressLint("MissingPermission")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,6 +54,7 @@ fun CityMapScreen(
     onFabClick: () -> Unit,
     viewModel: CityMapViewModel = viewModel(factory = CityMapViewModel.Factory)
 ) {
+    val earthRadiusKm = 6371.0
     val isMarkerClicked = remember { mutableStateOf(false) }
     val markerClicked = remember { mutableStateOf<LatLng?>(null) }
     val context = LocalContext.current
@@ -68,6 +68,20 @@ fun CityMapScreen(
     var origin: LatLng? = null
     var destination: LatLng? = null
     val coroutineScope = rememberCoroutineScope()
+
+    fun isWithinOneKilometer(destination: LatLng, userLocation: Location): Boolean {
+        val latDistance = Math.toRadians(destination.latitude - userLocation.latitude)
+        val lonDistance = Math.toRadians(destination.longitude - userLocation.longitude)
+
+        val a = sin(latDistance / 2) * sin(latDistance / 2) +
+                cos(Math.toRadians(userLocation.latitude)) * cos(Math.toRadians(destination.latitude)) *
+                sin(lonDistance / 2) * sin(lonDistance / 2)
+
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        val distance = earthRadiusKm * c
+
+        return distance <= 1.0
+    }
 
     LaunchedEffect(key1 = state.city) {
         state.city?.let {
@@ -190,6 +204,11 @@ fun CityMapScreen(
                              title = "Your Location",
                              icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
                          )
+
+                         if (isWithinOneKilometer(destination!!, userLocation.value!!)) {
+                             //add 100 to the user's score
+
+                         }
                      }
 
                      Polyline(
